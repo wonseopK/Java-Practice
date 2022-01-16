@@ -49,6 +49,9 @@ public class Game {
 		StringBuilder stringBuilder = new StringBuilder();
 		for(int i=0; i<car.length; i++) {
 			if(car[i].getWinCount() == winnerNum) {
+				if(i!=0) {
+					stringBuilder.append(", ");
+				}
 				stringBuilder.append(car[i].getName());
 			}
 		}
@@ -70,6 +73,7 @@ public class Game {
 		
 		for(int i=0; i<count; i++) {
 			Game.playGame(carArray, count);
+			System.out.println("Round "+(i+1));
 			for(int j=0; j<carArray.length; j++) {
 				System.out.println(carArray[j].getName() + " : " + Game.printPosition(carArray[j].getWinCount()));
 			}
