@@ -1,6 +1,6 @@
 package car;
 
-public class Car{
+public class Car {
 	private String name;
 	private int winCount = 0;
 	
@@ -24,5 +24,6 @@ public class Car{
 		super();
 		this.name = name;
 	}
+
 
 }

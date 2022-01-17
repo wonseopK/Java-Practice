@@ -58,10 +58,17 @@ public class Game {
 		return stringBuilder;
 	}
 	
-	public static void main(String[] args) {
+	public static String getNames() {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("이름을,로구분하여 입력해주세요");
-		String names = sc.nextLine();
+		return sc.nextLine();
+	}
+	public static int getCount() {
+		Scanner sc = new Scanner(System.in);
+		return sc.nextInt();
+	}
+	public static void main(String[] args) {
+		String names = Game.getNames();
 		String[] nameList = splitName(names);
 		//car 객체 생성
 		Car[] carArray = new Car[nameList.length];
@@ -69,11 +76,11 @@ public class Game {
 			carArray[i] = new Car(nameList[i]);		
 		}
 		System.out.println("시도할 횟수를 입력해주세요");
-		int count = sc.nextInt();
+		int count = Game.getCount();
 		
 		for(int i=0; i<count; i++) {
 			Game.playGame(carArray, count);
-			System.out.println("Round "+(i+1));
+			System.out.println("Round"+(i+1));
 			for(int j=0; j<carArray.length; j++) {
 				System.out.println(carArray[j].getName() + " : " + Game.printPosition(carArray[j].getWinCount()));
 			}
