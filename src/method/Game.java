@@ -6,30 +6,49 @@ import java.util.Scanner;
 import car.Car;
 
 public class Game {
-	//이름 분리
-	public static String[] splitName(String names) {
-		String[] nameList = names.split(",");
-		return nameList;
+	public static String getPlayerNames() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("이름을,로구분하여 입력해주세요");
+		return sc.nextLine();
 	}
 	
-	//주사위
-	public static int getRandomNum() {
+	public static String[] splitPlayerNames(String names) {
+		String[] playerList = names.split(",");
+		return playerList;
+	}
+	
+	public static Car[] setPlayerCars(String[] playerList) {
+		Car[] playerCars = new Car[playerList.length];
+		for(int i=0; i<playerCars.length; i++) {
+			playerCars[i] = new Car(playerList[i]);		
+		}
+		return playerCars;
+	}
+	
+	public static int getPlayCount() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("시도할 횟수를 입력해주세요");
+		return sc.nextInt();
+	}
+	
+	public static int getRandomDiceNumber() {
 		return (int)(Math.random()*6); 
 	}
 	
-	//이긴횟수 계산
-	public static void playGame(Car[] car, int count) {
-		for(int i=0; i<car.length; i++) {
-			int dice = Game.getRandomNum();
-			if(dice > 4) {
-				int winCount = car[i].getWinCount(); 
-				car[i].setWinCount(winCount+1);
+	public static boolean isWin() {
+		return (Game.getRandomDiceNumber() > 4);
+	}
+	
+	public static void plusWinCount(Car[] playerCars) {
+		for(int i=0; i<playerCars.length; i++) {
+			int winCount = playerCars[i].getWinCount(); 
+			if(Game.isWin()) {
+				playerCars[i].setWinCount(winCount+1);
 			}
 		}
 	}
 	
-	//출력
-	public static StringBuilder printPosition(int winCount) {
+	public static StringBuilder getCurrentPosition(int winCount) {
 		StringBuilder stringBuilder = new StringBuilder();
 		for(int i=0; i<winCount; i++) {
 			stringBuilder.append("-");
@@ -37,58 +56,53 @@ public class Game {
 		return stringBuilder;
 	}
 	
-	//우승자 결정
-	public static StringBuilder getWinner(Car[] car) {
-		int[] winCountArray = new int[car.length];
-		for(int i=0; i<car.length; i++) {
-			winCountArray[i] = car[i].getWinCount();
+	public static void printPlayerPosition(Car[] playerCars) {
+		for(Car playerCar:playerCars) {
+			System.out.println(playerCar.getName() + " : " + Game.getCurrentPosition(playerCar.getWinCount()));
 		}
-		Arrays.sort(winCountArray);
-		int winnerNum = winCountArray[winCountArray.length-1];
-		
+		System.out.println();
+	}
+	
+	public static void playGame(int count, Car[] playerCars) {
+		for(int i=0; i<count; i++) {
+			System.out.println("Round"+(i+1));
+			Game.plusWinCount(playerCars);
+			Game.printPlayerPosition(playerCars);
+		}
+	}
+	
+	public static boolean isWinner(int winnerNum, Car playerCar) {
+		return (playerCar.getWinCount() == winnerNum);
+	}
+	
+	public static StringBuilder getWinnerNameList(int winnerNum, Car[] playerCars) {
 		StringBuilder stringBuilder = new StringBuilder();
-		for(int i=0; i<car.length; i++) {
-			if(car[i].getWinCount() == winnerNum) {
-				if(i!=0) {
-					stringBuilder.append(", ");
-				}
-				stringBuilder.append(car[i].getName());
+		int countWinner = 0;
+		for(Car playerCar:playerCars) {
+			if(isWinner(winnerNum, playerCar)) {
+				stringBuilder.append(countWinner == 0 ? "" : ",");
+				stringBuilder.append(playerCar.getName());
+				countWinner++;
 			}
 		}
 		return stringBuilder;
 	}
 	
-	public static String getNames() {
-		Scanner sc = new Scanner(System.in);
-		System.out.println("이름을,로구분하여 입력해주세요");
-		return sc.nextLine();
-	}
-	public static int getCount() {
-		Scanner sc = new Scanner(System.in);
-		return sc.nextInt();
-	}
-	public static void main(String[] args) {
-		String names = Game.getNames();
-		String[] nameList = splitName(names);
-		//car 객체 생성
-		Car[] carArray = new Car[nameList.length];
-		for(int i=0; i<carArray.length; i++) {
-			carArray[i] = new Car(nameList[i]);		
-		}
-		System.out.println("시도할 횟수를 입력해주세요");
-		int count = Game.getCount();
-		
-		for(int i=0; i<count; i++) {
-			Game.playGame(carArray, count);
-			System.out.println("Round"+(i+1));
-			for(int j=0; j<carArray.length; j++) {
-				System.out.println(carArray[j].getName() + " : " + Game.printPosition(carArray[j].getWinCount()));
-			}
-			System.out.println();
-		}
-		
+	
+	public static StringBuilder getWinnerName(Car[] playerCars) {
 		System.out.println("우승자");
-		System.out.println(Game.getWinner(carArray));
-		
+		int[] winCountArray = new int[playerCars.length];
+		for(int i=0; i<playerCars.length; i++) {
+			winCountArray[i] = playerCars[i].getWinCount();
+		}
+		Arrays.sort(winCountArray);
+		int winnerNum = winCountArray[winCountArray.length-1];
+		return Game.getWinnerNameList(winnerNum, playerCars);
+	}
+	
+	public static void main(String[] args) {
+		Car[] playerCars = Game.setPlayerCars(splitPlayerNames(Game.getPlayerNames()));
+		Game.playGame(Game.getPlayCount(), playerCars);
+		System.out.println(Game.getWinnerName(playerCars));
 	}
 }
