@@ -10,6 +10,7 @@ public class Game {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("이름을,로구분하여 입력해주세요");
 		return sc.nextLine();
+		//git practice
 	}
 	
 	public static String[] splitPlayerNames(String names) {
